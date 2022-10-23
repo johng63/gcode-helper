@@ -82,7 +82,7 @@ function App() {
 
   return (
     <div className="App">
-      <Card title="GCODE File Reader" subTitle="Update settings..." style={{ width: '25rem', marginBottom: '3em' }}>
+      <Card title="GCODE File Helper v1.1" subTitle="Update settings..." style={{ width: '25rem', marginBottom: '3em' }}>
         <p style={{ display: "flex" }}><label>Hot End Temp:</label>
           <InputText style={{ display: "flex" }} value={hotEndTemp} onInput={e => setHotEndTemp(e.target.value)} /></p>
         <p style={{ display: "flex" }}><label>Bed Temp:</label>
