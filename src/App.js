@@ -48,6 +48,7 @@ function App() {
     element.href = URL.createObjectURL(file);
     element.download = "NewGcodeFile.txt";
     document.body.appendChild(element);
+
     element.click();
   };
 
