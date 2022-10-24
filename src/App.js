@@ -1,13 +1,23 @@
 import React, { useState } from 'react';
 import './App.css';
 import TxtReader from './TxtReader'
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import { Card } from 'primereact/card';
+// import { InputText } from 'primereact/inputtext';
+// import { Button } from 'primereact/button';
+import Button from '@mui/material/Button';
+import Input from '@mui/material/Input';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
+import { maxWidth } from '@mui/system';
+//import { Card } from 'primereact/card';
 
-import "primereact/resources/themes/bootstrap4-light-blue/theme.css";  //theme
-import "primereact/resources/primereact.min.css";                  //core css
-import "primeicons/primeicons.css";
+// import "primereact/resources/themes/bootstrap4-light-blue/theme.css";  //theme
+// import "primereact/resources/primereact.min.css";                  //core css
+// import "primeicons/primeicons.css";
 
 function App() {
   const [hotEndTemp, setHotEndTemp] = useState(0);
@@ -37,7 +47,7 @@ function App() {
 
   const getLength = (meters) => {
     let feet = meters.replace('m', '') * 3.28084;
-    setFilamentLength(feet)
+    setFilamentLength(feet.toFixed(2))
   }
 
   const downloadTxtFile = (newText) => {
@@ -81,21 +91,57 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <Card title="GCODE File Helper v1.1" subTitle="Update settings." style={{ width: '25rem', marginBottom: '3em' }}>
-        <p style={{ display: "flex" }}><label>Hot End Temp:</label>
-          <InputText style={{ display: "flex" }} value={hotEndTemp} onInput={e => setHotEndTemp(e.target.value)} /></p>
-        <p style={{ display: "flex" }}><label>Bed Temp:</label>
-          <InputText style={{ display: "flex" }} value={bedTemp} onInput={e => setBedTemp(e.target.value)} /></p>
-        <p style={{ display: "flex" }}>LayerCount: {layerCount}</p>
-        <p style={{ display: "flex" }}>Filament in Feet: {filamentLength}</p>
+    <>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar margin={20}>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ display: { xs: 'none', sm: 'block' } }}
 
-        <TxtReader style={{ display: "flex" }} getHotEndTemp={getHotEndTemp} getBedTemp={getBedTemp} setText={setText} getLayerCount={getLayerCount} getLength={getLength} />
-        <Button style={{ display: "flex" }} onClick={getNewText}> Write File
-        </Button>
-        {/* <p>Text: {text}</p> */}
-      </Card>
-    </div >
+            >
+              GCODE File Helper v1.1
+            </Typography>
+
+          </Toolbar>
+        </AppBar>
+
+      </Box>
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center">
+        <Stack>
+          <Box sx={{ mx: "auto" }} >
+            <TxtReader style={{ display: "flex" }} getHotEndTemp={getHotEndTemp} getBedTemp={getBedTemp} setText={setText} getLayerCount={getLayerCount} getLength={getLength} />
+            {/* 
+              <Input type="file" variant="contained" color="primary" onChange={downloadTxtFile} /> */}
+          </Box>
+          <Card sx={{ minWidth: 275 }}>
+            <CardContent>
+              <Typography>
+                GCODE File Helper v1.1
+              </Typography>
+              <Typography>
+                Update settings...
+              </Typography>
+
+              <p style={{ display: "flex" }}><label>Hot End Temp:</label>
+                <Input style={{ display: "flex" }} value={hotEndTemp} onInput={e => setHotEndTemp(e.target.value)} /></p>
+              <p style={{ display: "flex" }}><label>Bed Temp:</label>
+                <Input style={{ display: "flex" }} value={bedTemp} onInput={e => setBedTemp(e.target.value)} /></p>
+              <p style={{ display: "flex" }}>LayerCount: {layerCount}</p>
+              <p style={{ display: "flex" }}>Filament in Feet: {filamentLength}</p>
+            </CardContent>
+            <Button style={{ display: "flex" }} onClick={getNewText}> Write File
+            </Button>
+            {/* <p>Text: {text}</p> */}
+          </Card>
+        </Stack>
+      </Box>
+    </>
   );
 }
 
