@@ -1,21 +1,15 @@
 import React, { useState } from 'react';
 import './App.css';
 import TxtReader from './TxtReader'
-// import { InputText } from 'primereact/inputtext';
-// import { Button } from 'primereact/button';
 import Button from '@mui/material/Button';
-import Input from '@mui/material/Input';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
 import Stack from '@mui/material/Stack';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
+import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Paper from '@mui/material/Paper';
 
-// import "primereact/resources/themes/bootstrap4-light-blue/theme.css";  //theme
-// import "primereact/resources/primereact.min.css";                  //core css
-// import "primeicons/primeicons.css";
 
 function App() {
   const [hotEndTemp, setHotEndTemp] = useState(0);
@@ -23,30 +17,25 @@ function App() {
   const [layerCount, setLayerCount] = useState(0);
   const [text, setThisText] = useState('');
   const [filamentLength, setFilamentLength] = useState(0);
+  const [fileName, setFileName] = useState('NewFile.gcode');
+  const [autoLevel, setAutoLevel] = useState(false);
+
 
   const setText = (text) => {
-    setThisText(text)
+    setThisText(text);
+  }
+  const setFile = (fileName) => {
+    setFileName(fileName)
   }
 
-  const getHotEndTemp = (heTemp) => {
-    setHotEndTemp(heTemp)
-
-  };
-
-  const getBedTemp = (bTemp) => {
-    setBedTemp(bTemp)
-
-  };
-
-  const getLayerCount = (lCount) => {
-    setLayerCount(lCount)
-
-  };
-
-  const getLength = (meters) => {
-    let feet = meters.replace('m', '') * 3.28084;
-    setFilamentLength(feet.toFixed(2))
+  const setData = (gcode_data) => {
+    setHotEndTemp(gcode_data[0]);
+    setBedTemp(gcode_data[1]);
+    setLayerCount(gcode_data[2]);
+    setFilamentLength(gcode_data[3]);
+    setAutoLevel(gcode_data[4]);
   }
+
 
   const downloadTxtFile = (newText) => {
     const element = document.createElement("a");
@@ -54,7 +43,7 @@ function App() {
       type: "text/plain"
     });
     element.href = URL.createObjectURL(file);
-    element.download = "NewGcodeFile.txt";
+    element.download = fileName;
     document.body.appendChild(element);
 
     element.click();
@@ -88,58 +77,73 @@ function App() {
     downloadTxtFile(newtext);
   };
 
+
   return (
-    <>
-      <Box sx={{ flexGrow: 1 }}>
-        <AppBar position="static">
-          <Toolbar margin={20}>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ display: { xs: 'none', sm: 'block' } }}
 
-            >
-              GCODE File Helper v1.1
-            </Typography>
+    <Container maxWidth="xs">
+      <Paper
+        elevation={4}
+        style={{
+          padding: 8,
+          border: "1px solid black"
+        }}
+      >
+        <Stack spacing={1} justify="center">
 
-          </Toolbar>
-        </AppBar>
+          <Typography
+            variant="h6"
+            align="center"
+            style={{
+              backgroundColor: "lightblue"
+            }}
+          >
+            GCODE File Helper v1.1
+          </Typography>
 
-      </Box>
-      <Box
-        display="flex"
-        alignItems="center"
-        justifyContent="center">
-        <Stack>
-          <Box sx={{ mx: "auto" }} >
-            <TxtReader style={{ display: "flex" }} getHotEndTemp={getHotEndTemp} getBedTemp={getBedTemp} setText={setText} getLayerCount={getLayerCount} getLength={getLength} />
-            {/* 
-              <Input type="file" variant="contained" color="primary" onChange={downloadTxtFile} /> */}
-          </Box>
-          <Card sx={{ minWidth: 275 }}>
-            <CardContent>
-              <Typography>
-                GCODE File Helper v1.1
-              </Typography>
-              <Typography>
-                Update settings...
-              </Typography>
+          <TxtReader style={{ display: "flex" }} gcodeData={setData} setText={setText} setFileName={setFile} />
 
-              <p style={{ display: "flex" }}><label>Hot End Temp:</label>
-                <Input style={{ display: "flex" }} value={hotEndTemp} onInput={e => setHotEndTemp(e.target.value)} /></p>
-              <p style={{ display: "flex" }}><label>Bed Temp:</label>
-                <Input style={{ display: "flex" }} value={bedTemp} onInput={e => setBedTemp(e.target.value)} /></p>
-              <p style={{ display: "flex" }}>LayerCount: {layerCount}</p>
-              <p style={{ display: "flex" }}>Filament in Feet: {filamentLength}</p>
-            </CardContent>
-            <Button style={{ display: "flex" }} onClick={getNewText}> Write File
-            </Button>
-            {/* <p>Text: {text}</p> */}
-          </Card>
+          <TextField
+            label="Hotend Temp"
+
+            value={hotEndTemp}
+            onInput={e => setHotEndTemp(e.target.value)}
+
+          />
+          <TextField
+            label="Bed Temp"
+
+            value={bedTemp}
+            onInput={e => setBedTemp(e.target.value)}
+
+          />
+          <TextField
+            label="Layer Count"
+
+            value={layerCount}
+
+          />
+          <TextField
+            label="Filament Length in Feet"
+            value={filamentLength}
+
+          />
+          <FormControlLabel
+            control={<Checkbox
+              checked={autoLevel}
+
+            />}
+            label="AutoBed Leveling"
+          />
+
+          <Button style={{ display: "flex" }} onClick={getNewText}> Write Changes to New File
+          </Button>
+
         </Stack>
-      </Box>
-    </>
+      </Paper>
+
+    </Container >
+
+
   );
 }
 
