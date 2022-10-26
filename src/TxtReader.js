@@ -1,34 +1,47 @@
 
-import { InputText } from 'primereact/inputtext';
+import TextField from '@mui/material/TextField';
 
-import "primereact/resources/themes/bootstrap4-light-blue/theme.css";  //theme
-import "primereact/resources/primereact.min.css";                  //core css
-import "primeicons/primeicons.css";
-
-const TxtReader = ({ getHotEndTemp, getBedTemp, setText, getLayerCount, getLength }) => {
+const TxtReader = ({ gcodeData, setText, setFileName }) => {
 
     const getFileData = async (file) => {
 
+        let filament_length = 0;
+        let layer_count = 0;
+        let hotend_temp = 0;
+        let bed_temp = 0;
+        let Autolevel = false;
 
         const reader = new FileReader();
         reader.onload = async function (e) {
+            //Set text of file
             setText(e.target.result)
+
+            setFileName(file.name)
+
+            //Get specific gcode data
             const textlines = e.target.result.split(/\r\n|\n/);
             for (var line = 0; line < textlines.length - 1; line++) {
-                if (textlines[line].startsWith('M104 S') && line < 40) {
-                    getHotEndTemp(textlines[line].replace('M104 S', ''));
-                }
-                if (textlines[line].startsWith('M140 S') && line < 40) {
-                    getBedTemp(textlines[line].replace('M140 S', ''));
+                if (textlines[line].startsWith(';Filament used:')) {
+                    let meters = textlines[line].replace(';Filament used: ', '');
+                    filament_length = meters.replace('m', '') * 3.28084;
                 }
                 if (textlines[line].startsWith(';LAYER_COUNT:')) {
-                    getLayerCount(textlines[line].replace(';LAYER_COUNT:', ''));
+                    layer_count = textlines[line].replace(';LAYER_COUNT:', '');
                 }
-                if (textlines[line].startsWith(';Filament used:')) {
-                    getLength(textlines[line].replace(';Filament used: ', ''));
+                if (textlines[line].startsWith('M140 S') && line < 40) {
+                    bed_temp = textlines[line].replace('M140 S', '');
                 }
-                //console.log(line + " --> "+ textlines[line]);  ;LAYER_COUNT:15
+                if (textlines[line].startsWith('M104 S') && line < 40) {
+                    hotend_temp = textlines[line].replace('M104 S', '');
+                }
+                if (textlines[line].startsWith('G29') && line < 40) {
+                    Autolevel = true;
+                }
+
+
             }
+
+            gcodeData([hotend_temp, bed_temp, layer_count, filament_length.toFixed(2), Autolevel]);
 
         }
         reader.readAsText(file);
@@ -36,16 +49,15 @@ const TxtReader = ({ getHotEndTemp, getBedTemp, setText, getLayerCount, getLengt
 
     return (
 
-        <InputText
-            type='file'
-            accept='.gcode'
-            id='txtFile'
+        <TextField
+            type="file"
+            variant='outlined'
             onChange={(e) => {
                 getFileData(e.target.files[0])
             }}
         >
-        </InputText>
-
+            Browse File
+        </TextField>
 
     );
 
