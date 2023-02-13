@@ -97,7 +97,7 @@ function App() {
               backgroundColor: "lightblue"
             }}
           >
-            GCODE File Helper v1.1
+            GCODE File Helper v1.1a
           </Typography>
 
           <TxtReader style={{ display: "flex" }} gcodeData={setData} setText={setText} setFileName={setFile} />
